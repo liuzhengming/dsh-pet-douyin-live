@@ -38,10 +38,19 @@ export async function openRoom(opts = {}) {
       '--disable-blink-features=AutomationControlled',
       '--no-first-run',
       '--no-default-browser-check',
+      '--no-restore-last-session',
+      '--hide-crash-restore-bubble',
     ],
   });
 
-  const page = context.pages()[0] ?? (await context.newPage());
+  // Edge 会把上次异常退出时开着的标签页恢复出来（比如上一次测试的房间），
+  // 于是会出现「一个自己设的房间 + 一个旧房间」两个窗口。
+  // 这里只留一个页面，并把它导航到目标房间。
+  const opened = context.pages();
+  const page = opened[0] ?? (await context.newPage());
+  for (const extra of opened.slice(1)) {
+    await extra.close().catch(() => {});
+  }
   page.setDefaultTimeout(30_000);
   page.on('dialog', (d) => d.dismiss().catch(() => {}));
 
