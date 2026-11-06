@@ -1,0 +1,33 @@
+{
+  "roomId": "",
+  "pet": {
+    "baseUrl": "http://127.0.0.1:52718",
+    "petId": "main",
+    "surface": "desktop"
+  },
+  "reply": {
+    "minIntervalSec": 20,
+    "maxPerMinute": 3,
+    "giftCooldownSec": 45,
+    "keywordCooldownSec": 10,
+    "chatProbability": 0.35,
+    "keywords": ["鱼", "小女仆", "主播"],
+    "ignoreGifts": ["小心心", "粉丝团灯牌", "人气票", "加油鸭", "棒棒糖"],
+    "maxBatch": 6,
+    "includeEnter": false,
+    "includeLike": false
+  },
+  "tts": {
+    "enabled": true,
+    "engine": "edge",
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "volume": 90,
+    "rate": "+8%"
+  },
+  "capture": {
+    "pollMs": 400,
+    "headless": false,
+    "channel": "msedge",
+    "profileDir": "browser-profile-anon"
+  }
+}

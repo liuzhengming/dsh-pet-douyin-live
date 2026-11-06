@@ -1,0 +1,43 @@
+{
+  "name": "douyin-live-pet",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "把抖音直播间的弹幕和礼物，变成 dsh-pet 头顶的气泡与语音",
+  "keywords": [
+    "douyin",
+    "live",
+    "danmaku",
+    "dsh",
+    "deepseek-harness",
+    "dsh-pet",
+    "tts",
+    "playwright"
+  ],
+  "homepage": "https://github.com/liuzhengming/douyin-live-pet#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liuzhengming/douyin-live-pet.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liuzhengming/douyin-live-pet/issues"
+  },
+  "author": "liuzhengming",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "login": "node src/login.mjs",
+    "discover": "node src/discover.mjs",
+    "inspect": "node src/inspect.mjs",
+    "anon-check": "node src/anon-check.mjs",
+    "start": "node src/bridge.mjs",
+    "say": "node src/bridge.mjs --say",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "node-edge-tts": "^1.2.12",
+    "playwright-core": "^1.63.0"
+  }
+}
