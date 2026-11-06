@@ -35,19 +35,27 @@
 
 ## 安装
 
-### 方式一：装成 DSH 插件（推荐）
+### 方式一：从 npm 安装（推荐）
+
+```powershell
+dsh plugin --profile desktop add dsh-douyin-live-pet
+```
+
+装完重启 DeepSeek Harness，**设置 → 左侧「抖音直播」**就会出现在菜单里。
+
+> `--profile desktop` 里的 `desktop` 换成你自己的 profile 名（默认就是 `desktop`）。
+> 也可以直接装进全局：`npm i -g dsh-douyin-live-pet`。
+
+### 方式二：从源码链接（改代码时用）
 
 ```powershell
 git clone git@github.com:liuzhengming/douyin-live-pet.git
 dsh plugin --profile desktop add link:D:\path\to\douyin-live-pet
 ```
 
-装完重启 DeepSeek Harness，**设置 → 左侧「抖音直播」**就会出现在菜单里。
+`link:` 安装会直接用仓库目录，改完代码刷新页面就生效，适合调试。
 
-> `--profile desktop` 里的 `desktop` 换成你自己的 profile 名（默认就是 `desktop`）。
-> 也可以不写 `link:`，直接把目录拖进插件管理器。
-
-### 方式二：不装插件，命令行跑
+### 方式三：不装插件，命令行跑
 
 ```powershell
 cd douyin-live-pet
