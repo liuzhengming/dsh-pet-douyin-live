@@ -22,6 +22,7 @@ export function createBubbleWatcher({
   const baseline = new Map(); // petId -> 上次看到的 counter
   const lastText = new Map(); // petId -> { text, at }
   const SAME_TEXT_WINDOW = 30_000;
+  const stats = { ticks: 0, fired: 0, lastTickAt: 0, lastError: null, lastBubbleAt: 0, lastBubble: null };
 
   async function tick() {
     const cfg = getConfig?.();
@@ -32,7 +33,11 @@ export function createBubbleWatcher({
     let state;
     try {
       state = await fetchJson(new URL('/dsh-pet-7340/state', base).toString());
+      stats.ticks += 1;
+      stats.lastTickAt = now();
+      stats.lastError = null;
     } catch (error) {
+      stats.lastError = String(error?.message ?? error).slice(0, 160);
       onError(error);
       return;
     }
@@ -57,6 +62,9 @@ export function createBubbleWatcher({
       if (seen && seen.text === text && now_ - seen.at < SAME_TEXT_WINDOW) continue;
       lastText.set(petId, { text, at: now_ });
 
+      stats.fired += 1;
+      stats.lastBubbleAt = now_;
+      stats.lastBubble = text.slice(0, 80);
       onBubble?.({ petId, text, image: pet?.say?.data?.image ?? null, at: now_ });
     }
   }
@@ -69,7 +77,8 @@ export function createBubbleWatcher({
       timer = setInterval(() => {
         void tick();
       }, DEFAULT_INTERVAL);
-      if (typeof timer.unref === 'function') timer.unref();
+      // 不 unref：DSH 宿主是长命进程，unref 在部分 Electron 环境里会让定时器饿死
+      void tick();
     },
     stop() {
       running = false;
@@ -77,6 +86,9 @@ export function createBubbleWatcher({
       timer = null;
       baseline.clear();
       lastText.clear();
+    },
+    stats() {
+      return { running, ...stats };
     },
     get running() {
       return running;

@@ -107,6 +107,7 @@ export function apply(ctx) {
           pet: { online: pet.online, reason: pet.reason ?? null, enabled: config.pet.enabled, baseUrl: config.pet.baseUrl },
           petId: config.pet.petId,
           surface: config.pet.surface,
+          bubble: bubbles.stats(),
           configErrors: config.errors ?? [],
         });
       }
