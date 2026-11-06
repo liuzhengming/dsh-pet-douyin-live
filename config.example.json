@@ -38,8 +38,8 @@
     "endpoint": "",
     "aliyun": {
       "apiKey": "",
-      "model": "cosyvoice-v2",
-      "voice": "longanyang",
+      "model": "qwen3-tts-flash",
+      "voice": "Cherry",
       "baseUrl": "https://dashscope.aliyuncs.com",
       "sampleRate": 24000
     },

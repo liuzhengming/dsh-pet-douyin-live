@@ -32,7 +32,7 @@ export const DEFAULTS = Object.freeze({
     volume: 90,
     rate: '+8%',
     endpoint: '', // engine=http 时的外接语音服务地址
-    aliyun: { apiKey: '', model: 'cosyvoice-v2', voice: 'longanyang', baseUrl: 'https://dashscope.aliyuncs.com', sampleRate: 24000 },
+    aliyun: { apiKey: '', model: 'qwen3-tts-flash', voice: 'Cherry', baseUrl: 'https://dashscope.aliyuncs.com', sampleRate: 24000 },
     openai: { baseUrl: 'https://api.openai.com/v1', apiKey: '', model: 'tts-1', voice: 'alloy' },
     azure: { region: 'eastasia', apiKey: '', voice: 'zh-CN-XiaoxiaoNeural' },
     elevenlabs: { apiKey: '', voiceId: '21m00Tcm4TlvDq8ikWAM' },

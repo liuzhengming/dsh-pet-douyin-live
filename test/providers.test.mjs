@@ -5,8 +5,32 @@ import {
   buildDashScopeTtsRequest,
   buildElevenLabsRequest,
   buildOpenAiSpeech,
+  dashscopeRoot,
   parseDashScopeTtsResponse,
 } from '../src/providers.mjs';
+
+test('dashscopeRoot：兼容模式/带版本/指到具体接口的地址都归一成域名', () => {
+  assert.equal(dashscopeRoot('https://dashscope.aliyuncs.com'), 'https://dashscope.aliyuncs.com');
+  assert.equal(dashscopeRoot('https://dashscope.aliyuncs.com/'), 'https://dashscope.aliyuncs.com');
+  assert.equal(dashscopeRoot('https://ws-x.cn-beijing.maas.aliyuncs.com/compatible-mode/v1'), 'https://ws-x.cn-beijing.maas.aliyuncs.com');
+  assert.equal(dashscopeRoot('https://dashscope.aliyuncs.com/api/v1'), 'https://dashscope.aliyuncs.com');
+  assert.equal(
+    dashscopeRoot('https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation'),
+    'https://dashscope.aliyuncs.com',
+  );
+  assert.equal(dashscopeRoot(''), 'https://dashscope.aliyuncs.com');
+});
+
+test('阿里云百炼：工作空间的兼容模式地址也能拼出正确接口', () => {
+  const req = buildDashScopeTtsRequest({
+    baseUrl: 'https://ws-x.cn-beijing.maas.aliyuncs.com/compatible-mode/v1',
+    apiKey: 'k',
+    model: 'qwen3-tts-flash',
+    voice: 'Cherry',
+    text: 'hi',
+  });
+  assert.equal(req.url, 'https://ws-x.cn-beijing.maas.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation');
+});
 
 test('阿里云百炼：API Key + 模型名，走 SpeechSynthesizer', () => {
   const req = buildDashScopeTtsRequest({
@@ -23,6 +47,19 @@ test('阿里云百炼：API Key + 模型名，走 SpeechSynthesizer', () => {
   assert.equal(body.input.text, '你好');
   assert.equal(body.input.voice, 'longanyang');
   assert.equal(body.input.format, 'mp3');
+});
+
+test('阿里云百炼：qwen 系模型走 multimodal-generation，cosyvoice 走 SpeechSynthesizer', () => {
+  const q = buildDashScopeTtsRequest({ apiKey: 'k', model: 'Qwen-Audio-3.1-TTS-Flash', voice: 'Cherry', text: '你好' });
+  assert.equal(q.url, 'https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation');
+  const qb = JSON.parse(q.body);
+  assert.equal(qb.model, 'Qwen-Audio-3.1-TTS-Flash');
+  assert.equal(qb.input.voice, 'Cherry');
+  assert.equal(qb.input.format, undefined);
+
+  const c = buildDashScopeTtsRequest({ apiKey: 'k', model: 'cosyvoice-v2', voice: 'longanyang', text: '你好' });
+  assert.equal(c.url, 'https://dashscope.aliyuncs.com/api/v1/services/audio/tts/SpeechSynthesizer');
+  assert.equal(JSON.parse(c.body).input.format, 'mp3');
 });
 
 test('阿里云百炼：填了完整接口地址就不再拼路径', () => {

@@ -9,9 +9,33 @@
  */
 import crypto from 'node:crypto';
 
-const DASHSCOPE_PATH = '/api/v1/services/audio/tts/SpeechSynthesizer';
+const DASHSCOPE_COSYVOICE_PATH = '/api/v1/services/audio/tts/SpeechSynthesizer';
+const DASHSCOPE_QWEN_PATH = '/api/v1/services/aigc/multimodal-generation/generation';
 
-/** 阿里云百炼：API Key + 模型名 + 音色 */
+/**
+ * 百炼的地址可能长这样：
+ *   https://dashscope.aliyuncs.com
+ *   https://dashscope.aliyuncs.com/api/v1
+ *   https://ws-xxxx.cn-beijing.maas.aliyuncs.com/compatible-mode/v1
+ * 统一削成「域名」，后面再按模型拼路径。
+ */
+export function dashscopeRoot(baseUrl) {
+  let root = String(baseUrl || 'https://dashscope.aliyuncs.com').trim().replace(/\/+$/, '');
+  root = root.replace(/\/compatible-mode\/v1$/i, '');
+  if (/\/api\/v1$/i.test(root)) root = root.replace(/\/api\/v1$/i, '');
+  // 已经指到具体接口的，也退回到域名
+  root = root
+    .replace(new RegExp(`${DASHSCOPE_QWEN_PATH}$`, 'i'), '')
+    .replace(new RegExp(`${DASHSCOPE_COSYVOICE_PATH}$`, 'i'), '');
+  return root;
+}
+
+/**
+ * 阿里云百炼（DashScope）语音合成，按模型名分两条路：
+ *   cosyvoice-*  → /api/v1/services/audio/tts/SpeechSynthesizer（可指定格式与采样率）
+ *   qwen*        → /api/v1/services/aigc/multimodal-generation/generation
+ * 两者都返回 JSON，音频地址在 output.audio.url。
+ */
 export function buildDashScopeTtsRequest({
   baseUrl = 'https://dashscope.aliyuncs.com',
   apiKey,
@@ -19,13 +43,19 @@ export function buildDashScopeTtsRequest({
   voice = 'longanyang',
   text,
   sampleRate = 24000,
+  languageType = 'Auto',
 }) {
-  const root = String(baseUrl).replace(/\/+$/, '');
-  const url = root.endsWith(DASHSCOPE_PATH) ? root : `${root}${DASHSCOPE_PATH}`;
+  const root = dashscopeRoot(baseUrl);
+  const isQwen = /^qwen/i.test(String(model));
+  const path = isQwen ? DASHSCOPE_QWEN_PATH : DASHSCOPE_COSYVOICE_PATH;
+  const url = `${root}${path}`;
+  const input = isQwen
+    ? { text, voice, language_type: languageType }
+    : { text, voice, format: 'mp3', sample_rate: sampleRate };
   return {
     url,
     headers: { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' },
-    body: JSON.stringify({ model, input: { text, voice, format: 'mp3', sample_rate: sampleRate } }),
+    body: JSON.stringify({ model, input }),
   };
 }
 
