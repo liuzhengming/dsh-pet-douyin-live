@@ -32,6 +32,7 @@ const NOISE_PATTERNS = [
   /本场点赞/, // 主播热度条
   /^\d+\+$/, // 榜单数值
   /^-\s+\S/, // 观众榜条目：- 昵称
+  /推荐了直播$/, // 系统推荐提示
 ];
 
 export function normalizeText(value) {

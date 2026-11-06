@@ -324,8 +324,11 @@ window.__ModuleLoader__.load({
             'div',
             { style: css.row },
             h(Toggle, { checked: config.autoStart, onChange: (v) => update(['autoStart'], v), label: 'DSH 启动时自动开始' }),
-            h('span', { style: css.desc }, '自动开始会用下面填写的房间号'),
+            h(Toggle, { checked: config.capture?.hidden, onChange: (v) => update(['capture', 'hidden'], v), label: '后台运行（窗口移到屏幕外）' }),
           ),
+          config.capture?.hidden
+            ? h('p', { style: css.desc }, '后台运行不是无头模式：抖音不给无头浏览器弹幕，所以仍然是真浏览器渲染，只是窗口摆在屏幕外。')
+            : null,
         ),
 
         h(

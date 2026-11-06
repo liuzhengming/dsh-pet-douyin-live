@@ -73,6 +73,8 @@ async function main() {
   const cfg = loadCliConfig(args);
   // 命令行模式没有 webServer，按环境变量或默认端口猜；插件模式由宿主半现算
   cfg.pet.baseUrl = resolvePetBaseUrl(cfg.pet.baseUrl, Number(process.env.DSH_WEB_PORT || 0));
+  if (args.headless) cfg.capture.headless = true;
+  if (args.hidden) cfg.capture.hidden = true;
   if (args.profile) cfg.capture.profileDir = path.resolve(ROOT, String(args.profile));
 
   if (args.selftest) {

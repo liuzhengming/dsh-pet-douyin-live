@@ -54,6 +54,7 @@ test('parseRecord：价目表、榜单、升级提示、空评论都不算消息
   assert.equal(parseRecord({ text: '1 聪哥｜巨航' }), null);
   assert.equal(parseRecord({ text: '恭喜杨你一脸沙子刚刚升级至Lv.18' }), null);
   assert.equal(parseRecord({ text: '心碎小鱼：' }), null);
+  assert.equal(parseRecord({ text: '用户123 推荐了直播' }), null);
   assert.equal(parseRecord({ text: '账号已在其他地方进入直播间 继续看播' }), null);
 });
 

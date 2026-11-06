@@ -22,10 +22,17 @@ export async function openRoom(opts = {}) {
     url,
     profileDir = DEFAULT_PROFILE,
     headless = false,
+    hidden = false,
     channel = 'msedge',
   } = opts;
   const target = url || (roomId ? `https://live.douyin.com/${encodeURIComponent(roomId)}` : null);
   if (!target) throw new Error('缺少直播间号（roomId）或完整地址（url）');
+
+  // 后台模式：不用 headless（抖音对无头浏览器不给弹幕），
+  // 而是把窗口摆到屏幕外，用户看不见，但浏览器是正常渲染的。
+  const placement = hidden
+    ? ['--window-position=-32000,-32000', '--window-size=900,700']
+    : ['--start-maximized'];
 
   const context = await chromium.launchPersistentContext(path.resolve(profileDir), {
     channel,
@@ -33,7 +40,7 @@ export async function openRoom(opts = {}) {
     viewport: null,
     locale: 'zh-CN',
     args: [
-      '--start-maximized',
+      ...placement,
       '--mute-audio',
       '--disable-blink-features=AutomationControlled',
       '--no-first-run',

@@ -33,7 +33,7 @@ export const DEFAULTS = Object.freeze({
     rate: '+8%',
     endpoint: '', // engine=http 时的外接语音服务地址
   },
-  capture: { pollMs: 400, headless: false, channel: 'msedge', profileDir: '' },
+  capture: { pollMs: 400, headless: false, hidden: false, channel: 'msedge', profileDir: '' },
   fallback: { narrate: true },
 });
 
@@ -137,6 +137,7 @@ export function normalizeConfig(input = {}) {
     capture: {
       pollMs: Math.round(clampNumber(merged.capture?.pollMs, DEFAULTS.capture.pollMs, LIMITS.pollMs)),
       headless: Boolean(merged.capture?.headless),
+      hidden: Boolean(merged.capture?.hidden),
       channel: String(merged.capture?.channel || 'msedge'),
       profileDir: String(merged.capture?.profileDir || ''),
     },

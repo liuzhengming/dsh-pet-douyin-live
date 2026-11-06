@@ -88,6 +88,7 @@ export class LiveEngine {
       roomId: room,
       profileDir: this.profileDir(),
       headless: this.#config.capture.headless,
+      hidden: this.#config.capture.hidden,
       channel: this.#config.capture.channel,
     }).catch((error) => {
       this.#state.running = false;
