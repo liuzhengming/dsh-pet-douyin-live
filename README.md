@@ -60,7 +60,7 @@ dsh plugin --profile desktop add link:D:\path\to\douyin-live-pet
 ```powershell
 cd douyin-live-pet
 npm install
-npm start -- --room 170276491197
+npm start -- --room <房间号>
 ```
 
 命令行模式和设置页共用同一套采集/回话/朗读逻辑，只是没有界面。

@@ -109,6 +109,8 @@ export function apply(ctx) {
         const body = await readBody(req);
         const room = normalizeRoom(body.roomId ?? config.roomId);
         if (!room) return sendJson(res, 200, { ok: false, error: '先填直播间房间号或链接' });
+        // 先真正开起来再记房间号：填错了或房间进不去，不该覆盖上次能用的那个
+        await engine.start(room);
         if (config.roomId !== room) {
           const saved = writeConfig({ roomId: room }, configFile());
           if (saved.ok) {
@@ -116,7 +118,6 @@ export function apply(ctx) {
             engine.updateConfig(config);
           }
         }
-        await engine.start(room);
         return sendJson(res, 200, { ok: true, state: engine.status() });
       }
 

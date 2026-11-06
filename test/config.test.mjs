@@ -6,9 +6,9 @@ import test from 'node:test';
 import { DEFAULTS, normalizeConfig, normalizeRoom, readConfig, resolvePetBaseUrl, writeConfig } from '../src/config.mjs';
 
 test('normalizeRoom：房间号与链接都认', () => {
-  assert.equal(normalizeRoom('170276491197'), '170276491197');
-  assert.equal(normalizeRoom('https://live.douyin.com/170276491197'), '170276491197');
-  assert.equal(normalizeRoom('https://live.douyin.com/170276491197?foo=1'), '170276491197');
+  assert.equal(normalizeRoom('123456789'), '123456789');
+  assert.equal(normalizeRoom('https://live.douyin.com/123456789'), '123456789');
+  assert.equal(normalizeRoom('https://live.douyin.com/123456789?foo=1'), '123456789');
   assert.equal(normalizeRoom('  '), '');
   assert.equal(normalizeRoom('随便一个词'), '');
 });
@@ -56,10 +56,10 @@ test('resolvePetBaseUrl：本机地址跟随端口，非本机地址原样用', 
 test('writeConfig / readConfig：往返一致，坏文件不致命', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'dlp-cfg-'));
   const file = path.join(dir, 'config.json');
-  const saved = writeConfig({ roomId: '170276491197', tts: { voice: 'zh-CN-YunxiNeural' } }, file);
+  const saved = writeConfig({ roomId: '123456789', tts: { voice: 'zh-CN-YunxiNeural' } }, file);
   assert.equal(saved.ok, true);
   const read = readConfig(file);
-  assert.equal(read.roomId, '170276491197');
+  assert.equal(read.roomId, '123456789');
   assert.equal(read.tts.voice, 'zh-CN-YunxiNeural');
   assert.deepEqual(read.errors, []);
 

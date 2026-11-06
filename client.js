@@ -312,11 +312,11 @@ window.__ModuleLoader__.load({
 
         h(
           Card,
-          { title: '直播间', desc: '填房间号，或直接粘贴 live.douyin.com 的链接。' },
+          { title: '直播间', desc: '填房间号，或直接粘贴 live.douyin.com 的链接。填一次就会记住，下次自动带出来。' },
           h(
             'div',
             { style: css.row },
-            h(Text, { value: room, onChange: setRoom, placeholder: '例如 170276491197 或 https://live.douyin.com/170276491197', width: 380 }),
+            h(Text, { value: room, onChange: setRoom, placeholder: '例如 123456789 或 https://live.douyin.com/123456789', width: 380 }),
             h(Button, { onClick: start, primary: true, disabled: busy || running }, running ? '运行中' : '开始监听'),
             running ? h(Button, { onClick: stop, disabled: busy }, '停止') : null,
           ),
