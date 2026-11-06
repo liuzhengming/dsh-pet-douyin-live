@@ -66,6 +66,9 @@
     "channel": "msedge",
     "profileDir": ""
   },
+  "bubble": {
+    "enabled": true
+  },
   "fallback": {
     "narrate": true
   }

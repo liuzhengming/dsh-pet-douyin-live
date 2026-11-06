@@ -38,6 +38,8 @@ export const DEFAULTS = Object.freeze({
     elevenlabs: { apiKey: '', voiceId: '21m00Tcm4TlvDq8ikWAM' },
   },
   capture: { pollMs: 400, headless: false, hidden: false, channel: 'msedge', profileDir: '' },
+  // 桌宠头顶只要冒出新气泡就念出来（碎碎念、余额、工作状态、/chat 回复都算）
+  bubble: { enabled: true },
   fallback: { narrate: true },
 });
 
@@ -171,6 +173,7 @@ export function normalizeConfig(input = {}) {
       channel: String(merged.capture?.channel || 'msedge'),
       profileDir: String(merged.capture?.profileDir || ''),
     },
+    bubble: { enabled: merged.bubble?.enabled !== false },
     fallback: { narrate: merged.fallback?.narrate !== false },
   };
 

@@ -342,6 +342,7 @@ window.__ModuleLoader__.load({
             'div',
             { style: css.row },
             h(Toggle, { checked: tts.enabled, onChange: (v) => update(['tts', 'enabled'], v), label: '启用语音' }),
+            h(Toggle, { checked: config.bubble?.enabled, onChange: (v) => update(['bubble', 'enabled'], v), label: '桌宠冒泡就朗读' }),
             h('span', { style: css.label }, '引擎'),
             h(Select, {
               value: tts.engine,

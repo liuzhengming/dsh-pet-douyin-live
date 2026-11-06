@@ -8,6 +8,7 @@ import { homeDir } from './config.mjs';
 import { buildPrompt, createDeduper, parseRecord } from './parser.mjs';
 import { createReplyPolicy } from './policy.mjs';
 import { checkPet, generateReply } from './reply.mjs';
+import { markSpoken } from './speech-ledger.mjs';
 import { speak } from './tts.mjs';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -203,6 +204,8 @@ export class LiveEngine {
       this.#state.replies += 1;
       this.#log(result.source === 'pet' ? `桌宠回话：${result.text}` : `播报：${result.text}`);
       if (cfg.tts.enabled && cfg.tts.engine !== 'off') {
+        // 同一句话马上会以气泡形式出现，先记一笔，气泡监听器就不会再念一遍
+        markSpoken(result.text);
         const spoken = await speak(result.text, cfg.tts);
         if (!spoken.ok) this.#log(`朗读失败（${spoken.engine ?? 'tts'}）：${spoken.error ?? ''}`);
       }

@@ -12,9 +12,11 @@
  *   GET  /pet            桌宠连通性
  */
 import { configFile, historyFile, normalizeRoom, publicConfig, readConfig, resolvePetBaseUrl, writeConfig } from './config.mjs';
+import { createBubbleWatcher } from './bubble-watcher.mjs';
 import { LiveEngine } from './engine.mjs';
 import { createHistory } from './history.mjs';
 import { checkPet } from './reply.mjs';
+import { wasRecentlySpoken } from './speech-ledger.mjs';
 import { speak } from './tts.mjs';
 
 export const name = 'douyin-live-pet';
@@ -68,6 +70,22 @@ export function apply(ctx) {
   const history = createHistory({ file: historyFile() });
   const log = (line) => console.log(`[douyin-live-pet] ${line}`);
   const engine = new LiveEngine({ config, history, log });
+
+  // 气泡朗读：不管气泡是碎碎念、余额、工作状态还是 /chat 回复，冒出来就念。
+  // 直播回话那句已经由引擎念过，这里用 ledger 跳过，避免同一句读两遍。
+  const bubbles = createBubbleWatcher({
+    getConfig: () => config,
+    onBubble: ({ text }) => {
+      if (wasRecentlySpoken(text)) return;
+      log(`气泡朗读：${text}`);
+      void speak(text, config.tts).then((r) => {
+        if (!r.ok) log(`气泡朗读失败（${r.engine ?? 'tts'}）：${r.error ?? ''}`);
+      });
+    },
+    onError: () => {
+      // 桌宠没开时每 1.2 秒都会失败一次，静默即可
+    },
+  });
 
   const reload = () => {
     config = resolved(readConfig());
@@ -167,7 +185,10 @@ export function apply(ctx) {
 
   ctx.effect(() => () => {
     void engine.stop('插件卸载');
+    bubbles.stop();
   });
+
+  bubbles.start();
 
   if (config.autoStart && config.roomId) {
     setTimeout(() => {
