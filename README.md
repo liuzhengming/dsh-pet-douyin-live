@@ -1,4 +1,6 @@
-# douyin-live-pet
+# dsh-pet-douyin-live
+
+> **旧名 dsh-douyin-live-pet 已废弃，请使用 dsh-pet-douyin-live。**
 
 > 把抖音直播间的弹幕和礼物，变成 [dsh-pet](https://github.com/PC2005-cloud/dsh-pet) 头顶的气泡，再读出声。
 > 装进 DeepSeek Harness 后，**设置页左侧会多一个「抖音直播」**，里面能填直播间、调语音、看对话记录。
@@ -38,18 +40,18 @@
 ### 方式一：从 npm 安装（推荐）
 
 ```powershell
-dsh plugin --profile desktop add dsh-douyin-live-pet
+dsh plugin --profile desktop add dsh-pet-douyin-live
 ```
 
 装完重启 DeepSeek Harness，**设置 → 左侧「抖音直播」**就会出现在菜单里。
 
 > `--profile desktop` 里的 `desktop` 换成你自己的 profile 名（默认就是 `desktop`）。
-> 也可以直接装进全局：`npm i -g dsh-douyin-live-pet`。
+> 也可以直接装进全局：`npm i -g dsh-pet-douyin-live`。
 
 ### 方式二：从源码链接（改代码时用）
 
 ```powershell
-git clone git@github.com:liuzhengming/dsh-douyin-live-pet.git
+git clone git@github.com:liuzhengming/dsh-pet-douyin-live.git
 dsh plugin --profile desktop add link:D:\path\to\douyin-live-pet
 ```
 

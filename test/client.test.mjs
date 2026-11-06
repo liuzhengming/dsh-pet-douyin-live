@@ -24,7 +24,7 @@ function loadClient() {
   const context = vm.createContext({ window, console, fetch: async () => ({ ok: true, json: async () => ({}) }) });
   vm.runInContext(code, context, { filename: 'client.js' });
   assert.ok(loaded, 'client.js 没有调用 __ModuleLoader__.load');
-  assert.equal(loaded.id, 'dsh-douyin-live-pet');
+  assert.equal(loaded.id, 'dsh-pet-douyin-live');
 
   const React = {
     createElement: (type, props, ...children) => ({ type, props: { ...(props ?? {}), children } }),

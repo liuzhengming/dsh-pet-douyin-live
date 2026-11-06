@@ -5,7 +5,7 @@
  * 约定：所有数据都走宿主半的 /douyin-live-pet 前缀，不直接读写文件。
  */
 window.__ModuleLoader__.load({
-  id: 'dsh-douyin-live-pet',
+  id: 'dsh-pet-douyin-live',
   factory: (require) => {
     const React = require('react');
     const { useCallback, useEffect, useRef, useState } = React;
