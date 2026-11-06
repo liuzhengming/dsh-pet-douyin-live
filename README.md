@@ -1,7 +1,5 @@
 # dsh-pet-douyin-live
 
-> **旧名 dsh-douyin-live-pet 已废弃，请使用 dsh-pet-douyin-live。**
-
 > 把抖音直播间的弹幕和礼物，变成 [dsh-pet](https://github.com/PC2005-cloud/dsh-pet) 头顶的气泡，再读出声。
 > 装进 DeepSeek Harness 后，**设置页左侧会多一个「抖音直播」**，里面能填直播间、调语音、看对话记录。
 
