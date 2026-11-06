@@ -11,7 +11,7 @@
  *   POST /say            试听一句话
  *   GET  /pet            桌宠连通性
  */
-import { configFile, historyFile, normalizeRoom, publicConfig, readConfig, writeConfig } from './config.mjs';
+import { configFile, historyFile, normalizeRoom, publicConfig, readConfig, resolvePetBaseUrl, writeConfig } from './config.mjs';
 import { LiveEngine } from './engine.mjs';
 import { createHistory } from './history.mjs';
 import { checkPet } from './reply.mjs';
@@ -59,13 +59,18 @@ function readBody(req) {
 }
 
 export function apply(ctx) {
-  let config = readConfig();
+  // DSH 每次启动端口都可能变，桌宠的 /dsh-pet-7340/* 路由跟着 DSH 走，
+  // 所以没显式配置时按当前 Web 端口现算。
+  const webPort = () => (typeof ctx.webServer?.port === 'number' ? ctx.webServer.port : 0);
+  const resolved = (cfg) => ({ ...cfg, pet: { ...cfg.pet, baseUrl: resolvePetBaseUrl(cfg.pet.baseUrl, webPort()) } });
+
+  let config = resolved(readConfig());
   const history = createHistory({ file: historyFile() });
   const log = (line) => console.log(`[douyin-live-pet] ${line}`);
   const engine = new LiveEngine({ config, history, log });
 
   const reload = () => {
-    config = readConfig();
+    config = resolved(readConfig());
     engine.updateConfig(config);
     return config;
   };
@@ -80,7 +85,7 @@ export function apply(ctx) {
         const pet = await checkPet(config.pet);
         return sendJson(res, 200, {
           ...engine.status(),
-          pet: { online: pet.online, reason: pet.reason ?? null, enabled: config.pet.enabled },
+          pet: { online: pet.online, reason: pet.reason ?? null, enabled: config.pet.enabled, baseUrl: config.pet.baseUrl },
           petId: config.pet.petId,
           surface: config.pet.surface,
           configErrors: config.errors ?? [],
@@ -95,7 +100,7 @@ export function apply(ctx) {
         const patch = await readBody(req);
         const saved = writeConfig(patch, configFile());
         if (!saved.ok) return sendJson(res, 200, { ok: false, errors: saved.errors, config: publicConfig(saved.config) });
-        config = { ...saved.config, errors: [] };
+        config = { ...resolved(saved.config), errors: [] };
         engine.updateConfig(config);
         return sendJson(res, 200, { ok: true, config: publicConfig(config) });
       }
@@ -107,7 +112,7 @@ export function apply(ctx) {
         if (config.roomId !== room) {
           const saved = writeConfig({ roomId: room }, configFile());
           if (saved.ok) {
-            config = { ...saved.config, errors: [] };
+            config = { ...resolved(saved.config), errors: [] };
             engine.updateConfig(config);
           }
         }

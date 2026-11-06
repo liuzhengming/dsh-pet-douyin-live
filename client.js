@@ -301,7 +301,7 @@ window.__ModuleLoader__.load({
             ? h(
                 'div',
                 { style: { ...css.desc, ...css.mono } },
-                '没有桌宠时会降级成「播报」：只谢礼物、只回应被叫到的名字。想让它像人一样聊天，装一个 dsh-pet —— 在 DSH 插件市场搜 dsh-pet，或执行：dsh plugin --profile <你的 profile> add dsh-pet',
+                `探测地址：${status?.pet?.baseUrl ?? '未知'}。没有桌宠时会降级成「播报」：只谢礼物、只回应被叫到的名字。想让它像人一样聊天，装一个 dsh-pet —— 在 DSH 插件市场搜 dsh-pet，或执行：dsh plugin --profile <你的 profile> add dsh-pet`,
               )
             : null,
           status?.lastError ? h('div', { style: { ...css.desc, color: '#f53f3f' } }, `最近错误：${status.lastError}`) : null,

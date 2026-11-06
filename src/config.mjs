@@ -11,7 +11,8 @@ export const PLUGIN_ID = 'dsh-douyin-live-pet';
 export const DEFAULTS = Object.freeze({
   roomId: '',
   autoStart: false,
-  pet: { enabled: true, baseUrl: 'http://127.0.0.1:52718', petId: 'main', surface: 'desktop' },
+  // baseUrl 留空 = 自动跟随当前 DSH 的 Web 端口（插件宿主半会填上）
+  pet: { enabled: true, baseUrl: '', petId: 'main', surface: 'desktop' },
   reply: {
     minIntervalSec: 20,
     maxPerMinute: 3,
@@ -101,7 +102,7 @@ export function normalizeConfig(input = {}) {
     autoStart: Boolean(merged.autoStart),
     pet: {
       enabled: merged.pet?.enabled !== false,
-      baseUrl: String(merged.pet?.baseUrl || DEFAULTS.pet.baseUrl).replace(/\/+$/, ''),
+      baseUrl: String(merged.pet?.baseUrl ?? '').trim().replace(/\/+$/, ''),
       petId: String(merged.pet?.petId || DEFAULTS.pet.petId).trim() || DEFAULTS.pet.petId,
       surface: ['web', 'desktop'].includes(merged.pet?.surface) ? merged.pet.surface : DEFAULTS.pet.surface,
     },
@@ -148,10 +149,22 @@ export function normalizeConfig(input = {}) {
   if (cfg.tts.engine === 'http' && !/^https?:\/\//i.test(cfg.tts.endpoint)) {
     errors.push('外接语音服务地址要以 http:// 或 https:// 开头');
   }
-  if (!/^https?:\/\//i.test(cfg.pet.baseUrl)) {
-    errors.push('桌宠地址要以 http:// 开头');
+  if (cfg.pet.baseUrl && !/^https?:\/\//i.test(cfg.pet.baseUrl)) {
+    errors.push('桌宠地址要以 http:// 开头（留空表示自动跟随当前 DSH）');
   }
   return { config: cfg, errors };
+}
+
+/**
+ * 桌宠地址：用户填了就用用户的，没填就跟随 DSH 当前 Web 端口。
+ * DSH 每次启动端口都可能变，所以不能写死。
+ * @param {string} configured
+ * @param {number} port DSH Web 端口
+ */
+export function resolvePetBaseUrl(configured, port) {
+  const own = String(configured ?? '').trim().replace(/\/+$/, '');
+  if (own) return own;
+  return port > 0 ? `http://127.0.0.1:${port}` : 'http://127.0.0.1:52718';
 }
 
 export function readConfig(file = configFile()) {

@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
-import { DEFAULTS, normalizeConfig, normalizeRoom, readConfig, writeConfig } from '../src/config.mjs';
+import { DEFAULTS, normalizeConfig, normalizeRoom, readConfig, resolvePetBaseUrl, writeConfig } from '../src/config.mjs';
 
 test('normalizeRoom：房间号与链接都认', () => {
   assert.equal(normalizeRoom('170276491197'), '170276491197');
@@ -42,6 +42,12 @@ test('normalizeConfig：外接语音必须带 http 地址', () => {
 test('normalizeConfig：关键词去空去重上限', () => {
   const { config } = normalizeConfig({ reply: { keywords: [' 鱼 ', '', '鱼', '主播'] } });
   assert.deepEqual(config.reply.keywords, ['鱼', '主播']);
+});
+
+test('resolvePetBaseUrl：留空跟随当前 DSH 端口，填了就用填的', () => {
+  assert.equal(resolvePetBaseUrl('', 52802), 'http://127.0.0.1:52802');
+  assert.equal(resolvePetBaseUrl('', 0), 'http://127.0.0.1:52718');
+  assert.equal(resolvePetBaseUrl('http://192.168.1.5:8000/', 52802), 'http://192.168.1.5:8000');
 });
 
 test('writeConfig / readConfig：往返一致，坏文件不致命', () => {

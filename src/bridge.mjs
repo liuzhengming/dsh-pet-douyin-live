@@ -9,7 +9,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { DEFAULTS, deepMerge, normalizeConfig, normalizeRoom, readConfig, configFile } from './config.mjs';
+import { DEFAULTS, deepMerge, normalizeConfig, normalizeRoom, readConfig, resolvePetBaseUrl, configFile } from './config.mjs';
 import { LiveEngine } from './engine.mjs';
 import { createHistory } from './history.mjs';
 import { generateReply, checkPet } from './reply.mjs';
@@ -71,6 +71,8 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const log = createLogger();
   const cfg = loadCliConfig(args);
+  // 命令行模式没有 webServer，按环境变量或默认端口猜；插件模式由宿主半现算
+  cfg.pet.baseUrl = resolvePetBaseUrl(cfg.pet.baseUrl, Number(process.env.DSH_WEB_PORT || 0));
   if (args.profile) cfg.capture.profileDir = path.resolve(ROOT, String(args.profile));
 
   if (args.selftest) {
