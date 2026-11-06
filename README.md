@@ -225,6 +225,21 @@ npm test
 - `test/collector.test.mjs`：本地假页面验证「注入 → 监听 → drain」，含选择器全不命中时的自校准
 - `test/client.test.mjs`：用假的模块加载器跑 `client.js`，验证插槽注册与首帧渲染
 
+## 发布（维护者）
+
+npm **不允许同一个版本号重复发布**，所以每次发版前必须先升 `version`：
+
+```powershell
+npm version patch --no-git-tag-version   # 0.3.0 → 0.3.1
+npm test
+git add -A; git commit -m "chore: 0.3.1"; git push
+npm publish
+```
+
+- 只改文档、不打算发版，可以不升版本；
+- 忘升版本会直接失败（`EPUBLISHCONFLICT` / `cannot publish over`）；
+- 发布需要账号 2FA，由维护者本人在终端执行。
+
 ## 隐私
 
 - `browser-profile*/` 是浏览器数据（可能含 cookie），已在 `.gitignore` 里。
