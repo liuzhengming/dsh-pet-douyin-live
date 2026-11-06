@@ -114,7 +114,7 @@ dsh plugin --profile desktop add dsh-pet
 |---|---|
 | `edge`（默认） | Edge 的在线 TTS，免费、不用 Key、音质好；断网会自动退回系统语音 |
 | `sapi` | Windows 自带语音，完全离线，音质一般 |
-| `aliyun` | 阿里云百炼（DashScope）：填 **API Key + 模型名 + 音色**，例如模型 `cosyvoice-v2`、音色 `longanyang` |
+| `aliyun` | 阿里云百炼（DashScope）：填 **API Key + 模型名 + 音色**，例如 `qwen3-tts-flash` + `Cherry`。接口地址默认 `https://dashscope.aliyuncs.com`，跨业务空间的 Key 也能用；填了 `…/compatible-mode/v1` 或专属工作空间域名也会自动归一 |
 | `openai` | OpenAI 兼容的 `/audio/speech`：OpenAI、硅基流动等都能用 |
 | `azure` | Azure 语音服务：区域 + 订阅 Key + 音色 |
 | `elevenlabs` | ElevenLabs：API Key + Voice ID |
