@@ -11,7 +11,7 @@
  *   POST /say            试听一句话
  *   GET  /pet            桌宠连通性
  */
-import { configFile, historyFile, normalizeRoom, publicConfig, readConfig, resolvePetBaseUrl, writeConfig } from './config.mjs';
+import { configFile, historyFile, maskSecrets, normalizeRoom, publicConfig, readConfig, resolvePetBaseUrl, stripMasked, writeConfig } from './config.mjs';
 import { createBubbleWatcher } from './bubble-watcher.mjs';
 import { LiveEngine } from './engine.mjs';
 import { createHistory } from './history.mjs';
@@ -111,16 +111,18 @@ export function apply(ctx) {
       }
 
       if (route === '/config' && method === 'GET') {
-        return sendJson(res, 200, publicConfig(config));
+        return sendJson(res, 200, maskSecrets(publicConfig(config)));
       }
 
       if (route === '/config' && method === 'POST') {
-        const patch = await readBody(req);
+        const patch = stripMasked(await readBody(req));
         const saved = writeConfig(patch, configFile());
-        if (!saved.ok) return sendJson(res, 200, { ok: false, errors: saved.errors, config: publicConfig(saved.config) });
+        if (!saved.ok) {
+          return sendJson(res, 200, { ok: false, errors: saved.errors, config: maskSecrets(publicConfig(saved.config)) });
+        }
         config = { ...resolved(saved.config), errors: [] };
         engine.updateConfig(config);
-        return sendJson(res, 200, { ok: true, config: publicConfig(config) });
+        return sendJson(res, 200, { ok: true, config: maskSecrets(publicConfig(config)) });
       }
 
       if (route === '/start' && method === 'POST') {

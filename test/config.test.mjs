@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
-import { DEFAULTS, normalizeConfig, normalizeRoom, readConfig, resolvePetBaseUrl, writeConfig } from '../src/config.mjs';
+import { DEFAULTS, maskSecrets, normalizeConfig, normalizeRoom, readConfig, resolvePetBaseUrl, SECRET_MASK, stripMasked, writeConfig } from '../src/config.mjs';
 
 test('normalizeRoom：房间号与链接都认', () => {
   assert.equal(normalizeRoom('123456789'), '123456789');
@@ -51,6 +51,24 @@ test('resolvePetBaseUrl：本机地址跟随端口，非本机地址原样用', 
   assert.equal(resolvePetBaseUrl('http://127.0.0.1:52718', 52802), 'http://127.0.0.1:52802');
   assert.equal(resolvePetBaseUrl('http://localhost:1111', 52802), 'http://127.0.0.1:52802');
   assert.equal(resolvePetBaseUrl('http://192.168.1.5:8000/', 52802), 'http://192.168.1.5:8000');
+});
+
+test('maskSecrets：密钥只回掩码，真值不外泄', () => {
+  const { config } = normalizeConfig({ tts: { aliyun: { apiKey: 'sk-real-key' }, openai: { apiKey: 'oa' } } });
+  const masked = maskSecrets(config);
+  assert.equal(masked.tts.aliyun.apiKey, SECRET_MASK);
+  assert.equal(masked.tts.openai.apiKey, SECRET_MASK);
+  assert.equal(JSON.stringify(masked).includes('sk-real-key'), false);
+  // 原始对象不被改动
+  assert.equal(config.tts.aliyun.apiKey, 'sk-real-key');
+});
+
+test('stripMasked：保存时不会把掩码写进配置', () => {
+  const patch = stripMasked({ tts: { aliyun: { apiKey: SECRET_MASK, model: 'qwen3-tts-flash' } } });
+  assert.equal(patch.tts.aliyun.apiKey, undefined);
+  assert.equal(patch.tts.aliyun.model, 'qwen3-tts-flash');
+  // 用户真的改了，就保留
+  assert.equal(stripMasked({ tts: { aliyun: { apiKey: 'sk-new' } } }).tts.aliyun.apiKey, 'sk-new');
 });
 
 test('writeConfig / readConfig：往返一致，坏文件不致命', () => {

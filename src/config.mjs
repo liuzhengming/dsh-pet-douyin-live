@@ -203,6 +203,34 @@ export function resolvePetBaseUrl(configured, port) {
   return own || 'http://127.0.0.1:52718';
 }
 
+export const SECRET_MASK = '••••••••';
+
+const SECRET_PATHS = [
+  ['tts', 'aliyun', 'apiKey'],
+  ['tts', 'openai', 'apiKey'],
+  ['tts', 'azure', 'apiKey'],
+  ['tts', 'elevenlabs', 'apiKey'],
+];
+
+/** 回给设置页的配置：密钥只显示掩码，真值不出本机 */
+export function maskSecrets(cfg) {
+  const copy = structuredClone(cfg ?? {});
+  for (const [section, vendor, field] of SECRET_PATHS) {
+    const value = copy?.[section]?.[vendor]?.[field];
+    if (typeof value === 'string' && value) copy[section][vendor][field] = SECRET_MASK;
+  }
+  return copy;
+}
+
+/** 保存时把「没改过的掩码」剔掉，避免把 •••• 写进配置 */
+export function stripMasked(patch) {
+  const copy = structuredClone(patch ?? {});
+  for (const [section, vendor, field] of SECRET_PATHS) {
+    if (copy?.[section]?.[vendor]?.[field] === SECRET_MASK) delete copy[section][vendor][field];
+  }
+  return copy;
+}
+
 export function readConfig(file = configFile()) {
   let raw = {};
   try {

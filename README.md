@@ -252,6 +252,8 @@ npm publish
 ## 隐私
 
 - `browser-profile*/` 是浏览器数据（可能含 cookie），已在 `.gitignore` 里。
+- 语音厂商的 API Key 只存在于本机 `~/.dsh/douyin-live-pet/config.json`，**不会进 git，也不会随 npm 包发布**；
+  设置页读到的密钥一律是掩码，保存时也不会把掩码写回去。
 - 采集只在你本机发生，弹幕只发给你自己的桌宠，不经过第三方服务。
 - 语音走 Edge 的公开 TTS 接口，只发送要朗读的那句话；用 `http` 引擎时发给你自己的服务。
 

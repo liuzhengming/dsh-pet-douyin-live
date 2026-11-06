@@ -388,7 +388,7 @@ window.__ModuleLoader__.load({
                 ),
                 h(
                   Field,
-                  { label: '接口地址（一般不用改）', hint: '默认 https://dashscope.aliyuncs.com 即可，跨业务空间的 Key 也能用；只有需要业务空间级隔离时才填专属域名。模型名决定接口：qwen3-tts-flash 等走 multimodal，cosyvoice-* 走 SpeechSynthesizer。' },
+                  { label: '接口地址（一般不用改）', hint: '默认 https://dashscope.aliyuncs.com 即可，跨业务空间的 Key 也能用；只有需要业务空间级隔离时才填专属域名。模型名决定接口：qwen3-tts-flash 等走 multimodal，cosyvoice-* 走 SpeechSynthesizer。已保存的 Key 只回显掩码，要换就整段替换。' },
                   h(Text, { value: tts.aliyun?.baseUrl, onChange: (v) => update(['tts', 'aliyun', 'baseUrl'], v), width: 460, mono: true }),
                 ),
               )
