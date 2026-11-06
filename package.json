@@ -1,6 +1,6 @@
 {
   "name": "dsh-douyin-live-pet",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "description": "抖音直播间弹幕/礼物 → dsh-pet 气泡 + 语音朗读。带设置页与对话记录。",
   "main": "./src/plugin.mjs",
@@ -26,13 +26,13 @@
     "dsh-pet",
     "tts"
   ],
-  "homepage": "https://github.com/liuzhengming/douyin-live-pet#readme",
+  "homepage": "https://github.com/liuzhengming/dsh-douyin-live-pet#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/liuzhengming/douyin-live-pet.git"
+    "url": "git+https://github.com/liuzhengming/dsh-douyin-live-pet.git"
   },
   "bugs": {
-    "url": "https://github.com/liuzhengming/douyin-live-pet/issues"
+    "url": "https://github.com/liuzhengming/dsh-douyin-live-pet/issues"
   },
   "author": "liuzhengming",
   "license": "MIT",

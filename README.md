@@ -49,7 +49,7 @@ dsh plugin --profile desktop add dsh-douyin-live-pet
 ### 方式二：从源码链接（改代码时用）
 
 ```powershell
-git clone git@github.com:liuzhengming/douyin-live-pet.git
+git clone git@github.com:liuzhengming/dsh-douyin-live-pet.git
 dsh plugin --profile desktop add link:D:\path\to\douyin-live-pet
 ```
 
