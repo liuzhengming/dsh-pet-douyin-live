@@ -44,9 +44,12 @@ test('normalizeConfig：关键词去空去重上限', () => {
   assert.deepEqual(config.reply.keywords, ['鱼', '主播']);
 });
 
-test('resolvePetBaseUrl：留空跟随当前 DSH 端口，填了就用填的', () => {
+test('resolvePetBaseUrl：本机地址跟随端口，非本机地址原样用', () => {
   assert.equal(resolvePetBaseUrl('', 52802), 'http://127.0.0.1:52802');
   assert.equal(resolvePetBaseUrl('', 0), 'http://127.0.0.1:52718');
+  // 旧配置里存下的本机端口不能再信
+  assert.equal(resolvePetBaseUrl('http://127.0.0.1:52718', 52802), 'http://127.0.0.1:52802');
+  assert.equal(resolvePetBaseUrl('http://localhost:1111', 52802), 'http://127.0.0.1:52802');
   assert.equal(resolvePetBaseUrl('http://192.168.1.5:8000/', 52802), 'http://192.168.1.5:8000');
 });
 

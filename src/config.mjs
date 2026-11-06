@@ -156,15 +156,17 @@ export function normalizeConfig(input = {}) {
 }
 
 /**
- * 桌宠地址：用户填了就用用户的，没填就跟随 DSH 当前 Web 端口。
- * DSH 每次启动端口都可能变，所以不能写死。
+ * 桌宠地址：本机地址一律按 DSH 当前 Web 端口现算（DSH 每次启动端口都可能变，
+ * 旧配置里存下的 52718 之类不能信）；只有填了非本机地址才原样使用。
  * @param {string} configured
  * @param {number} port DSH Web 端口
  */
 export function resolvePetBaseUrl(configured, port) {
   const own = String(configured ?? '').trim().replace(/\/+$/, '');
-  if (own) return own;
-  return port > 0 ? `http://127.0.0.1:${port}` : 'http://127.0.0.1:52718';
+  const loopback = /^https?:\/\/(?:127\.0\.0\.1|localhost)(?::\d+)?$/i.test(own);
+  if (own && !loopback) return own;
+  if (port > 0) return `http://127.0.0.1:${port}`;
+  return own || 'http://127.0.0.1:52718';
 }
 
 export function readConfig(file = configFile()) {
