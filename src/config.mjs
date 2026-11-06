@@ -27,11 +27,15 @@ export const DEFAULTS = Object.freeze({
   },
   tts: {
     enabled: true,
-    engine: 'edge', // edge | sapi | http | off
+    engine: 'edge', // edge | sapi | http | aliyun | openai | azure | elevenlabs | off
     voice: 'zh-CN-XiaoxiaoNeural',
     volume: 90,
     rate: '+8%',
     endpoint: '', // engine=http 时的外接语音服务地址
+    aliyun: { apiKey: '', model: 'cosyvoice-v2', voice: 'longanyang', baseUrl: 'https://dashscope.aliyuncs.com', sampleRate: 24000 },
+    openai: { baseUrl: 'https://api.openai.com/v1', apiKey: '', model: 'tts-1', voice: 'alloy' },
+    azure: { region: 'eastasia', apiKey: '', voice: 'zh-CN-XiaoxiaoNeural' },
+    elevenlabs: { apiKey: '', voiceId: '21m00Tcm4TlvDq8ikWAM' },
   },
   capture: { pollMs: 400, headless: false, hidden: false, channel: 'msedge', profileDir: '' },
   fallback: { narrate: true },
@@ -128,11 +132,37 @@ export function normalizeConfig(input = {}) {
     },
     tts: {
       enabled: merged.tts?.enabled !== false,
-      engine: ['edge', 'sapi', 'http', 'off'].includes(merged.tts?.engine) ? merged.tts.engine : 'edge',
+      engine: ['edge', 'sapi', 'http', 'aliyun', 'openai', 'azure', 'elevenlabs', 'off'].includes(merged.tts?.engine)
+        ? merged.tts.engine
+        : 'edge',
       voice: String(merged.tts?.voice || DEFAULTS.tts.voice),
       volume: Math.round(clampNumber(merged.tts?.volume, DEFAULTS.tts.volume, LIMITS.volume)),
       rate: String(merged.tts?.rate || DEFAULTS.tts.rate),
       endpoint: String(merged.tts?.endpoint || ''),
+      aliyun: {
+        apiKey: String(merged.tts?.aliyun?.apiKey || ''),
+        model: String(merged.tts?.aliyun?.model || DEFAULTS.tts.aliyun.model),
+        voice: String(merged.tts?.aliyun?.voice || DEFAULTS.tts.aliyun.voice),
+        baseUrl: String(merged.tts?.aliyun?.baseUrl || DEFAULTS.tts.aliyun.baseUrl).replace(/\/+$/, ''),
+        sampleRate: [8000, 16000, 22050, 24000, 44100, 48000].includes(Number(merged.tts?.aliyun?.sampleRate))
+          ? Number(merged.tts.aliyun.sampleRate)
+          : DEFAULTS.tts.aliyun.sampleRate,
+      },
+      openai: {
+        baseUrl: String(merged.tts?.openai?.baseUrl || DEFAULTS.tts.openai.baseUrl).replace(/\/+$/, ''),
+        apiKey: String(merged.tts?.openai?.apiKey || ''),
+        model: String(merged.tts?.openai?.model || DEFAULTS.tts.openai.model),
+        voice: String(merged.tts?.openai?.voice || DEFAULTS.tts.openai.voice),
+      },
+      azure: {
+        region: String(merged.tts?.azure?.region || DEFAULTS.tts.azure.region),
+        apiKey: String(merged.tts?.azure?.apiKey || ''),
+        voice: String(merged.tts?.azure?.voice || DEFAULTS.tts.azure.voice),
+      },
+      elevenlabs: {
+        apiKey: String(merged.tts?.elevenlabs?.apiKey || ''),
+        voiceId: String(merged.tts?.elevenlabs?.voiceId || DEFAULTS.tts.elevenlabs.voiceId),
+      },
     },
     capture: {
       pollMs: Math.round(clampNumber(merged.capture?.pollMs, DEFAULTS.capture.pollMs, LIMITS.pollMs)),

@@ -114,7 +114,15 @@ dsh plugin --profile desktop add dsh-pet
 |---|---|
 | `edge`（默认） | Edge 的在线 TTS，免费、不用 Key、音质好；断网会自动退回系统语音 |
 | `sapi` | Windows 自带语音，完全离线，音质一般 |
+| `aliyun` | 阿里云百炼（DashScope）：填 **API Key + 模型名 + 音色**，例如模型 `cosyvoice-v2`、音色 `longanyang` |
+| `openai` | OpenAI 兼容的 `/audio/speech`：OpenAI、硅基流动等都能用 |
+| `azure` | Azure 语音服务：区域 + 订阅 Key + 音色 |
+| `elevenlabs` | ElevenLabs：API Key + Voice ID |
 | `http` | 接你自己的语音服务，见下 |
+| `off` | 不朗读 |
+
+云端引擎失败时会**自动退回 Edge TTS**，不会整场没声音。密钥只保存在本机
+`~/.dsh/douyin-live-pet/config.json`，不会上传到别处。
 
 外接语音服务只要满足：**POST JSON `{text, voice}`，返回 `audio/*` 音频流**。
 
@@ -166,7 +174,7 @@ POST http://127.0.0.1:9880/tts  {"text":"你好","voice":"zh-CN-XiaoxiaoNeural"}
 | `reply.keywords` | 鱼 / 小女仆 / 主播 | 命中优先回 |
 | `reply.ignoreGifts` | 小心心 等 | 这些小礼物不逐条谢 |
 | `reply.includeEnter` / `includeLike` | false | 是否回应进场、点赞 |
-| `tts.engine` | `edge` | `edge` / `sapi` / `http` / `off` |
+| `tts.engine` | `edge` | `edge` / `sapi` / `aliyun` / `openai` / `azure` / `elevenlabs` / `http` / `off` |
 | `tts.voice` | `zh-CN-XiaoxiaoNeural` | 也可 `zh-CN-YunxiNeural`、`zh-CN-XiaoyiNeural` |
 | `tts.endpoint` | 空 | `engine=http` 时的语音服务地址 |
 | `capture.profileDir` | `~/.dsh/douyin-live-pet/browser-profile-anon` | 浏览器数据目录 |

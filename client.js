@@ -349,6 +349,10 @@ window.__ModuleLoader__.load({
               options: [
                 ['edge', 'Edge TTS（在线，免费）'],
                 ['sapi', '系统语音（离线）'],
+                ['aliyun', '阿里云语音合成'],
+                ['openai', 'OpenAI 兼容（硅基流动等）'],
+                ['azure', 'Azure 语音服务'],
+                ['elevenlabs', 'ElevenLabs'],
                 ['http', '外接语音服务（HTTP）'],
                 ['off', '不朗读'],
               ],
@@ -369,6 +373,62 @@ window.__ModuleLoader__.load({
                 { label: '外接语音服务地址', hint: 'POST JSON {text, voice}，返回 audio/* 音频流即可。' },
                 h(Text, { value: tts.endpoint, onChange: (v) => update(['tts', 'endpoint'], v), width: 420, mono: true, placeholder: 'http://127.0.0.1:9880/tts' }),
               )
+            : null,
+          tts.engine === 'aliyun'
+            ? h(
+                'div',
+                { style: { ...css.col, gap: 10 } },
+                h(
+                  'div',
+                  { style: css.row },
+                  h(Field, { label: 'API Key' }, h(Text, { value: tts.aliyun?.apiKey, onChange: (v) => update(['tts', 'aliyun', 'apiKey'], v), width: 280, mono: true, placeholder: 'sk-…' })),
+                  h(Field, { label: '模型' }, h(Text, { value: tts.aliyun?.model, onChange: (v) => update(['tts', 'aliyun', 'model'], v), width: 170, mono: true })),
+                  h(Field, { label: '音色' }, h(Text, { value: tts.aliyun?.voice, onChange: (v) => update(['tts', 'aliyun', 'voice'], v), width: 150, mono: true })),
+                ),
+                h(
+                  Field,
+                  { label: '接口地址（一般不用改）', hint: '默认走百炼公网；用工作空间专属域名时改这里。' },
+                  h(Text, { value: tts.aliyun?.baseUrl, onChange: (v) => update(['tts', 'aliyun', 'baseUrl'], v), width: 460, mono: true }),
+                ),
+              )
+            : null,
+          tts.engine === 'openai'
+            ? h(
+                'div',
+                { style: { ...css.col, gap: 10 } },
+                h(
+                  Field,
+                  { label: '接口地址', hint: 'OpenAI 兼容的 /audio/speech，例如硅基流动填 https://api.siliconflow.cn/v1' },
+                  h(Text, { value: tts.openai?.baseUrl, onChange: (v) => update(['tts', 'openai', 'baseUrl'], v), width: 420, mono: true }),
+                ),
+                h(
+                  'div',
+                  { style: css.row },
+                  h(Field, { label: 'API Key' }, h(Text, { value: tts.openai?.apiKey, onChange: (v) => update(['tts', 'openai', 'apiKey'], v), width: 260, mono: true })),
+                  h(Field, { label: '模型' }, h(Text, { value: tts.openai?.model, onChange: (v) => update(['tts', 'openai', 'model'], v), width: 130, mono: true })),
+                  h(Field, { label: '音色' }, h(Text, { value: tts.openai?.voice, onChange: (v) => update(['tts', 'openai', 'voice'], v), width: 130, mono: true })),
+                ),
+              )
+            : null,
+          tts.engine === 'azure'
+            ? h(
+                'div',
+                { style: css.row },
+                h(Field, { label: '区域' }, h(Text, { value: tts.azure?.region, onChange: (v) => update(['tts', 'azure', 'region'], v), width: 130, mono: true })),
+                h(Field, { label: '订阅 Key' }, h(Text, { value: tts.azure?.apiKey, onChange: (v) => update(['tts', 'azure', 'apiKey'], v), width: 260, mono: true })),
+                h(Field, { label: '音色' }, h(Text, { value: tts.azure?.voice, onChange: (v) => update(['tts', 'azure', 'voice'], v), width: 220, mono: true })),
+              )
+            : null,
+          tts.engine === 'elevenlabs'
+            ? h(
+                'div',
+                { style: css.row },
+                h(Field, { label: 'API Key' }, h(Text, { value: tts.elevenlabs?.apiKey, onChange: (v) => update(['tts', 'elevenlabs', 'apiKey'], v), width: 260, mono: true })),
+                h(Field, { label: 'Voice ID' }, h(Text, { value: tts.elevenlabs?.voiceId, onChange: (v) => update(['tts', 'elevenlabs', 'voiceId'], v), width: 260, mono: true })),
+              )
+            : null,
+          ['aliyun', 'openai', 'azure', 'elevenlabs'].includes(tts.engine)
+            ? h('p', { style: css.desc }, '密钥只存在本机 ~/.dsh/douyin-live-pet/config.json。云端失败会自动退回 Edge TTS，不会整场没声音。')
             : null,
           h(
             'div',

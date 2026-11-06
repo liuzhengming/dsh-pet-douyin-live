@@ -35,7 +35,29 @@
     "voice": "zh-CN-XiaoxiaoNeural",
     "volume": 90,
     "rate": "+8%",
-    "endpoint": ""
+    "endpoint": "",
+    "aliyun": {
+      "apiKey": "",
+      "model": "cosyvoice-v2",
+      "voice": "longanyang",
+      "baseUrl": "https://dashscope.aliyuncs.com",
+      "sampleRate": 24000
+    },
+    "openai": {
+      "baseUrl": "https://api.openai.com/v1",
+      "apiKey": "",
+      "model": "tts-1",
+      "voice": "alloy"
+    },
+    "azure": {
+      "region": "eastasia",
+      "apiKey": "",
+      "voice": "zh-CN-XiaoxiaoNeural"
+    },
+    "elevenlabs": {
+      "apiKey": "",
+      "voiceId": "21m00Tcm4TlvDq8ikWAM"
+    }
   },
   "capture": {
     "pollMs": 400,
