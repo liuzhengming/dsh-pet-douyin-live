@@ -20,6 +20,8 @@ export function createBubbleWatcher({
   let timer = null;
   let running = false;
   const baseline = new Map(); // petId -> 上次看到的 counter
+  const lastText = new Map(); // petId -> { text, at }
+  const SAME_TEXT_WINDOW = 30_000;
 
   async function tick() {
     const cfg = getConfig?.();
@@ -49,7 +51,13 @@ export function createBubbleWatcher({
       if (prev === undefined) continue; // 首轮：只记基线，不念旧气泡
       if (counter === prev) continue;
 
-      onBubble?.({ petId, text, image: pet?.say?.data?.image ?? null, at: now() });
+      // 同一句在 30 秒内只念一次：气泡可能被重新推送，重复念会很吵
+      const seen = lastText.get(petId);
+      const now_ = now();
+      if (seen && seen.text === text && now_ - seen.at < SAME_TEXT_WINDOW) continue;
+      lastText.set(petId, { text, at: now_ });
+
+      onBubble?.({ petId, text, image: pet?.say?.data?.image ?? null, at: now_ });
     }
   }
 
@@ -68,6 +76,7 @@ export function createBubbleWatcher({
       if (timer) clearInterval(timer);
       timer = null;
       baseline.clear();
+      lastText.clear();
     },
     get running() {
       return running;

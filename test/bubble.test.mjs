@@ -32,6 +32,27 @@ test('气泡监听：counter 变了就念，没变不重复', async () => {
   assert.deepEqual(got, ['摆摆还没卸妆？那咱俩一起熬着～']);
 });
 
+test('气泡监听：同一句在 30 秒内只念一次（防重复推送刷屏）', async () => {
+  const got = [];
+  let state = petState(1, '同一句话');
+  const w = createBubbleWatcher({
+    getConfig: () => ({ pet: { enabled: true, baseUrl: 'http://x', petId: 'main' }, bubble: { enabled: true } }),
+    fetchJson: async () => state,
+    onBubble: (b) => got.push(b.text),
+  });
+  await w.tick();
+  for (const n of [2, 3, 4]) {
+    state = petState(n, '同一句话');
+    await w.tick();
+  }
+  assert.equal(got.length, 1);
+
+  // 换了内容就立刻念
+  state = petState(5, '换了一句');
+  await w.tick();
+  assert.deepEqual(got, ['同一句话', '换了一句']);
+});
+
 test('气泡监听：关掉开关就完全不读', async () => {
   const got = [];
   let state = petState(1, 'a');

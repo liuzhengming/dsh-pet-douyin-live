@@ -16,7 +16,7 @@ import { createBubbleWatcher } from './bubble-watcher.mjs';
 import { LiveEngine } from './engine.mjs';
 import { createHistory } from './history.mjs';
 import { checkPet } from './reply.mjs';
-import { wasRecentlySpoken } from './speech-ledger.mjs';
+import { markSpoken, wasRecentlySpoken } from './speech-ledger.mjs';
 import { speak } from './tts.mjs';
 
 export const name = 'douyin-live-pet';
@@ -77,6 +77,7 @@ export function apply(ctx) {
     getConfig: () => config,
     onBubble: ({ text }) => {
       if (wasRecentlySpoken(text)) return;
+      markSpoken(text);
       log(`气泡朗读：${text}`);
       void speak(text, config.tts).then((r) => {
         if (!r.ok) log(`气泡朗读失败（${r.engine ?? 'tts'}）：${r.error ?? ''}`);
